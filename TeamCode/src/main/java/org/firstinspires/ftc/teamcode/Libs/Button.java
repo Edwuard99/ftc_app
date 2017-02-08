@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Libs;
 
+import static java.lang.System.clearProperty;
 import static java.lang.System.currentTimeMillis;
 
 /**
@@ -25,18 +26,18 @@ public class Button {
 
 
     public void updateToggle(){
-        if(value == true && lastValue == false){
-            pressed = pressed + 1;
-            intrat = true;
-            if(toggle == false){
-                toggle = true;
-                toggleInt = 1;
-                lastToggleTime = currentTimeMillis();
+            if (value == true && lastValue == false) {
+                pressed = pressed + 1;
+                intrat = true;
+                if (toggle == false) {
+                    toggle = true;
+                    toggleInt = 1;
+                    lastToggleTime = currentTimeMillis();
+                } else if (toggle == true) {
+                    toggle = false;
+                    toggleInt = 0;
+                }
             }
-            else if(toggle == true){
-                toggle = false;
-                toggleInt = 0;
-            }
-        }
+
     }
 }

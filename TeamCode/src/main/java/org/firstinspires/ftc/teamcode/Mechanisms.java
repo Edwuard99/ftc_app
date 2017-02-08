@@ -26,8 +26,7 @@ class Mechanisms {
     public DcMotor motorMaturica = null;
     public DcMotor motorGlisiera = null;
 
-    public Double power = 0.4;
-    public Double increment = 0d;
+    public Double power = 0.25;
 
     public Double powerMaturica = 0.3d;
 
@@ -56,7 +55,7 @@ class Mechanisms {
     }
 
     void initOmni(){
-        power = 0.4;
+        power = 0.18;
         motorLansatorStanga = this.hardwareMap.dcMotor.get("motorLansatorStanga");
         motorLansatorDreapta = this.hardwareMap.dcMotor.get("motorLansatorDreapta");
 
@@ -72,6 +71,8 @@ class Mechanisms {
 
         motorLansatorStanga.setDirection(DcMotorSimple.Direction.FORWARD);
         motorLansatorDreapta.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        motorGlisiera.setDirection(DcMotorSimple.Direction.REVERSE);
 
         servoOpritor.setDirection(Servo.Direction.REVERSE);
         servoApasatorStanga.setDirection(Servo.Direction.REVERSE);
@@ -81,7 +82,7 @@ class Mechanisms {
     }
 
     void initTank(){
-        power = 0.4;
+        power = 0.23;
         motorLansatorStanga = this.hardwareMap.dcMotor.get("motorLansatorStanga");
         motorLansatorDreapta = this.hardwareMap.dcMotor.get("motorLansatorDreapta");
 
@@ -98,11 +99,12 @@ class Mechanisms {
         motorLansatorStanga.setDirection(DcMotorSimple.Direction.FORWARD);
         motorLansatorDreapta.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        servoOpritor.setDirection(Servo.Direction.REVERSE);
+        servoOpritor.setDirection(Servo.Direction.FORWARD);
         servoApasatorStanga.setDirection(Servo.Direction.FORWARD);
         servoApasatorDreapta.setDirection(Servo.Direction.REVERSE);
 
         motorMaturica.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorGlisiera.setDirection(DcMotorSimple.Direction.REVERSE);
 
     }
 
@@ -113,29 +115,35 @@ class Mechanisms {
         motorLansatorDreapta.setPower(gamepad.y.toggleInt * power);
 
         motorMaturica.setPower(powerMaturica);
-        motorGlisiera.setPower(gamepad.dpad_power);
+        motorGlisiera.setPower(dpad_power());
 
         servoApasatorDreapta.setPosition(gamepad.right_bumper.toggleInt);
         servoApasatorStanga.setPosition(gamepad.left_bumper.toggleInt);
 
         servoGlisiera.setPosition(gamepad.left_trigger);
-        servoOpritor.setPosition(gamepad.a.toggleInt);
-
-
-
-        //powerAdjust();
+        servoOpritor.setPosition(gamepad.a.toggleInt * 0.9);
 
         telemetry.addData("lansator power: ", power);
     }
 
-    void powerAdjust(){
-        increment = (gamepad.right_bumper.pressed - gamepad.left_bumper.pressed) * 0.1;
-        power = power + increment;
+    double dpad_power(){
+        double dpad_power = 0.1;
+        if(gamepad.dpad_up.value == true){
+            dpad_power = 1;
+        }
+        else if (gamepad.dpad_down.value == true){
+            dpad_power = -1;
+        }
+        else{
+            dpad_power = 0.1;
+        }
+
+        return dpad_power;
     }
 
     Double getPowerMaturica(){
         Double power;
-        if(gamepad.b.toggle == true){
+        if(gamepad.b.value == true){
             power =  -1d;
         }
         else{

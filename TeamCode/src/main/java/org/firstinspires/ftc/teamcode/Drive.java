@@ -112,22 +112,65 @@ public class Drive{
     }
 
     public void goTank(Double power_left, Double power_right){
-        if(gamepad.a.toggle == true) {
-            motorStangaFata.setPower(power_left);
-            motorStangaSpate.setPower(power_left);
+        if(gamepad.y.toggle == false) {
+            if (gamepad.a.toggle == true) {
+                motorStangaFata.setPower(power_left);
+                motorStangaSpate.setPower(power_left);
 
-            motorDreaptaFata.setPower(power_right);
-            motorDreaptaSpate.setPower(power_right);
+                motorDreaptaFata.setPower(power_right);
+                motorDreaptaSpate.setPower(power_right);
+            } else {
+                motorStangaFata.setPower(power_left * 0.3);
+                motorStangaSpate.setPower(power_left * 0.3);
+
+                motorDreaptaFata.setPower(power_right * 0.3);
+                motorDreaptaSpate.setPower(power_right * 0.3);
+            }
         }
-        else {
-            motorStangaFata.setPower(power_left * 0.5);
-            motorStangaSpate.setPower(power_left * 0.5);
+        else{
+            if (gamepad.a.toggle == true) {
+                motorStangaFata.setPower(-power_right);
+                motorStangaSpate.setPower(-power_right);
 
-            motorDreaptaFata.setPower(power_right * 0.5);
-            motorDreaptaSpate.setPower(power_right * 0.5);
+                motorDreaptaFata.setPower(-power_left);
+                motorDreaptaSpate.setPower(-power_left);
+            } else {
+                motorStangaFata.setPower(-power_right * 0.3);
+                motorStangaSpate.setPower(-power_right * 0.3);
+
+                motorDreaptaFata.setPower(-power_left * 0.3);
+                motorDreaptaSpate.setPower(-power_left * 0.3);
+            }
+
         }
     }
     public void goOmni(Double left_stick_powerY, Double left_stick_powerX, Double right_stick_powerX){
+        double a = left_stick_powerY + left_stick_powerX;
+        double b = -left_stick_powerY + left_stick_powerX;
+        double c = -left_stick_powerY - left_stick_powerX;
+        double d = left_stick_powerY - left_stick_powerX;
+
+        a += right_stick_powerX;
+        b += right_stick_powerX;
+        c += right_stick_powerX;
+        d += right_stick_powerX;
+
+        a = Utils.cut(a, -1d, 1d);
+        b = Utils.cut(b, -1d, 1d);
+        c = Utils.cut(c, -1d, 1d);
+        d = Utils.cut(d, -1d, 1d);
+
+        if (gamepad.a.toggle == false) {
+            a = a/4;
+            b = b/4;
+            c = c/4;
+            d = d /4;
+        }
+
+        setPower(a, b, c, d);
+    }
+
+    public void goOmniAutonomous(Double left_stick_powerY, Double left_stick_powerX, Double right_stick_powerX){
         double a = left_stick_powerY + left_stick_powerX;
         double b = -left_stick_powerY + left_stick_powerX;
         double c = -left_stick_powerY - left_stick_powerX;
