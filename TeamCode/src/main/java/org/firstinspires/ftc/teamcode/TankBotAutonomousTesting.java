@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -33,6 +34,7 @@ ticks per wheel rotation = 358.4
 */
 
 @Autonomous(name = "TankBotAutonomousTesting", group = "Autonomous")
+@Disabled
 public class TankBotAutonomousTesting extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 

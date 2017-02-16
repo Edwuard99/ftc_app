@@ -36,6 +36,8 @@ class Mechanisms {
     public Servo servoApasatorStanga = null;
     public Servo servoApasatorDreapta = null;
 
+    public Servo servoApucator = null;
+
     Mechanisms(HardwareMap hardwareMap, GAMEPAD gamepad, Telemetry telemetry, String type){
         this.gamepad = gamepad;
         this.hardwareMap = hardwareMap;
@@ -55,7 +57,7 @@ class Mechanisms {
     }
 
     void initOmni(){
-        power = 0.18;
+        power = 0.2;
         motorLansatorStanga = this.hardwareMap.dcMotor.get("motorLansatorStanga");
         motorLansatorDreapta = this.hardwareMap.dcMotor.get("motorLansatorDreapta");
 
@@ -68,6 +70,7 @@ class Mechanisms {
         servoApasatorStanga = this.hardwareMap.servo.get("servoApasatorStanga");
         servoApasatorDreapta = this.hardwareMap.servo.get("servoApasatorDreapta");
 
+        servoApucator = this.hardwareMap.servo.get("servoApucator");
 
         motorLansatorStanga.setDirection(DcMotorSimple.Direction.FORWARD);
         motorLansatorDreapta.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -79,6 +82,8 @@ class Mechanisms {
         servoApasatorDreapta.setDirection(Servo.Direction.FORWARD);
 
         motorMaturica.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        servoApucator.setDirection(Servo.Direction.FORWARD);
     }
 
     void initTank(){
@@ -95,6 +100,7 @@ class Mechanisms {
         servoApasatorStanga = this.hardwareMap.servo.get("servoApasatorStanga");
         servoApasatorDreapta = this.hardwareMap.servo.get("servoApasatorDreapta");
 
+        servoApucator = this.hardwareMap.servo.get("servoApucator");
 
         motorLansatorStanga.setDirection(DcMotorSimple.Direction.FORWARD);
         motorLansatorDreapta.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -103,8 +109,12 @@ class Mechanisms {
         servoApasatorStanga.setDirection(Servo.Direction.FORWARD);
         servoApasatorDreapta.setDirection(Servo.Direction.REVERSE);
 
+
+
         motorMaturica.setDirection(DcMotorSimple.Direction.FORWARD);
         motorGlisiera.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        servoApucator.setDirection(Servo.Direction.FORWARD);
 
     }
 
@@ -117,10 +127,12 @@ class Mechanisms {
         motorMaturica.setPower(powerMaturica);
         motorGlisiera.setPower(dpad_power());
 
-        servoApasatorDreapta.setPosition(gamepad.right_bumper.toggleInt);
-        servoApasatorStanga.setPosition(gamepad.left_bumper.toggleInt);
+        /*servoApasatorDreapta.setPosition(gamepad.right_bumper.toggleInt);
+        servoApasatorStanga.setPosition(gamepad.left_bumper.toggleInt);*/
 
         servoGlisiera.setPosition(gamepad.left_trigger);
+        servoApucator.setPosition(gamepad.left_bumper.toggleInt);
+
         servoOpritor.setPosition(gamepad.a.toggleInt * 0.9);
 
         telemetry.addData("lansator power: ", power);

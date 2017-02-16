@@ -72,9 +72,11 @@ public class OmniBotAutoRed extends LinearOpMode {
 
         servoApasatorStanga.setDirection(Servo.Direction.FORWARD);
         servoApasatorDreapta.setDirection(Servo.Direction.REVERSE);
+        servoOpritor.setDirection(Servo.Direction.FORWARD);
 
-        servoApasatorDreapta.setPosition(1);
-        servoApasatorStanga.setPosition(1);
+        servoApasatorDreapta.setPosition(0);
+        servoApasatorStanga.setPosition(0);
+        servoOpritor.setPosition(0);
 
         this.motorA = hardwareMap.dcMotor.get("motorA");
         this.motorB = hardwareMap.dcMotor.get("motorB");
@@ -86,60 +88,54 @@ public class OmniBotAutoRed extends LinearOpMode {
         motorC.setDirection(DcMotorSimple.Direction.FORWARD);
         motorD.setDirection(DcMotorSimple.Direction.FORWARD);
 
+        gyroSensor.calibrate();
+        waitSec(1);
+        while(gyroSensor.isCalibrating() && opModeIsActive()) ;//gyro calibration);
+        gyroSensor.resetZAxisIntegrator();
         telemetry.addData("gyro calibrat","");
         telemetry.update();
 
         waitForStart();
-
-        drive(0.5, 0d, 0d);
-        /*motorA.setPower(1);
-        waitSec(3);
-        motorA.setPower(0);
-        motorB.setPower(1);
-        waitSec(3);
-        motorB.setPower(0);
-        motorC.setPower(1);
-        waitSec(3);
-        motorC.setPower(0);
-        motorD.setPower(1);
-        waitSec(3);
-        motorD.setPower(0);*/
-       /* gyroPID(-35);
-
-
-        gyroPID(0);
+        motorLansare(0.18);
+        servoOpritor.setPosition(0.9);
         go(1500, 0.5);
-        waitSec(0.3);
-        gyroPID(90);
-        go(2300,0.5);
-        goToWhiteLine("left");
-        gyroPID(95);
-        goToWall(8);
-        waitSec(0.3);
-        drive.goOmniAutonomous(0.5, 0d, 0d);
-        waitSec(1);
-        drive.goOmniAutonomous(0d, 0d, 0d);
-        waitSec(0.3);
-        apasa("blue");
+        waitSec(0.5);
+        gyroPID(0);
+        motorMaturica.setPower(1);
+        waitSec(3);
+        motorMaturica.setPower(0);
+        motorLansare(0);
 
-        goBack(500,0.3);
-        drive.goOmniAutonomous(0d,-1d,0d);
-        waitSec(0.7);
-        goToWhiteLine("left");
+        go(1000, 0.5);
+        gyroPID(-90);
+        go(3500, 0.5);
+        goToWhiteLine("right");
+        gyroPID(-90);
+        goToWall(10);
         waitSec(0.3);
-        gyroPID(90);
-        goToWall(8);
+        drive(0.5, 0d, 0d);
+        waitSec(0.5);
+        drive(0d, 0d, 0d);
+        apasa("red");
+
+        goBack(200, 0.5);
+        drive(0d, 0.5, 0d);
+        waitSec(1.5);
+        drive(0d, 0d, 0d);
+        goToWhiteLine("right");
+        gyroPID(-90);
+        goToWall(10);
         waitSec(0.3);
-        drive.goOmniAutonomous(0.5, 0d, 0d);
-        waitSec(1);
-        drive.goOmniAutonomous(0d, 0d, 0d);
-        waitSec(0.3);
-        apasa("blue");*/
+        drive(0.5, 0d, 0d);
+        waitSec(0.5);
+        drive(0d, 0d, 0d);
+        apasa("red");
 
         while(opModeIsActive()){
             telemetry.addData("range: ", rangeDreapta.cmUltrasonic());
             telemetry.addData("gyro:", getHeading());
             telemetry.addData("burta alpha: ", colorBurta.alpha());
+            telemetry.addData("culoare beacon: ", getColor());
             telemetry.update();
         }
     }
@@ -147,13 +143,14 @@ public class OmniBotAutoRed extends LinearOpMode {
     public void go (int ticks, double speed) {
         int pos = drive.motorA.getCurrentPosition();
         ticks = ticks + pos;
-        drive.goOmniAutonomous(speed, 0d, 0d);
-        while(pos < ticks) {
+        drive(speed, 0d, 0d);
+        while(pos < ticks  && opModeIsActive()) {
             pos = drive.motorA.getCurrentPosition();
             telemetry.addData("gyro", getHeading());
             telemetry.update();
         }
-        drive.goOmniAutonomous(0d, 0d, 0d);
+        drive(0d, 0d, 0d);
+        waitSec(0.3);
     }
 
     public void motorLansare(double power){
@@ -164,36 +161,39 @@ public class OmniBotAutoRed extends LinearOpMode {
     public void goBack (int ticks, double speed) {
         int pos = drive.motorA.getCurrentPosition();
         ticks = pos - ticks;
-        drive.goOmniAutonomous(-speed, 0d, 0d);
-        while(pos < ticks) {
+        drive(-speed, 0d, 0d);
+        while(pos > ticks  && opModeIsActive()) {
             pos = drive.motorA.getCurrentPosition();
             telemetry.addData("gyro", getHeading());
+            telemetry.update();
+        }
+        drive(0d, 0d, 0d);
+    }
+
+    public void goToWall(int cm) {
+        drive.goOmniAutonomous(0.5, 0d, -0.3);
+        while(rangeDreapta.cmUltrasonic() > cm  && opModeIsActive()){
+            telemetry.addData("range:", rangeDreapta.cmUltrasonic());
             telemetry.update();
         }
         drive.goOmniAutonomous(0d, 0d, 0d);
     }
 
-    public void goToWall(int cm) {
-        drive.goOmniAutonomous(0.2, 0d, 0d);
-        while(rangeDreapta.cmUltrasonic() > cm);
-        drive.goOmniAutonomous(0d, 0d, 0d);
-    }
-
     public void gyroPID(int target){
-        double kp = 0.004;
+        double kp = 0.0035;
         double ki= 1;
         double kd = 0.2;
         double direction = 1;
         double lastDirection = 1;
         double P;
-        double I = 0;
+        double I = 0.1;
         double D;
         double output;
         double lasterror = 0;
         double error = 0;
         boolean targetAchieved = false;
 
-        while(!targetAchieved){
+        while(!targetAchieved  && opModeIsActive()){
             error = Math.abs(target - getHeading());
             //P = Utils.range(P, 0d, 90d, 0d, 1d);
 
@@ -214,8 +214,9 @@ public class OmniBotAutoRed extends LinearOpMode {
             }
 
             if(error < 10) {
+                I = 0.05;
                 if (lasterror == error) {
-                    I += 0.004;
+                    I += 0.002;
                 } else I -= 0.001;
 
                 if (I < 0)
@@ -229,7 +230,7 @@ public class OmniBotAutoRed extends LinearOpMode {
             output = P + I;
             output = output * direction;
 
-            drive.goOmniAutonomous(0d, 0d, output);
+            drive(0d, 0d, output);
 
             telemetry.addData("gyro: ", getHeading());
             telemetry.addData("gyro speed: ", gyroSensor.rawZ());
@@ -240,7 +241,7 @@ public class OmniBotAutoRed extends LinearOpMode {
             telemetry.addData("error: ", error);
             telemetry.addData("output: ", output);
             telemetry.update();
-            if(Math.abs(target - getHeading()) < 3 && gyroSensor.rawZ() < 50){
+            if(Math.abs(target - getHeading()) < 2 && gyroSensor.rawZ() < 50){
                 targetAchieved = true;
             }
             waitSec(0.1);
@@ -248,32 +249,32 @@ public class OmniBotAutoRed extends LinearOpMode {
             lasterror = error;
         }
 
-        drive.goOmniAutonomous(0d, 0d, 0d);
+        drive(0d, 0d, 0d);
         waitSec(0.1);
     }
 
     private void goToWhiteLine(String direction) {
         if(direction == "left") {
             drive.goOmniAutonomous(0d, -0.2, 0d);
-            while(colorBurta.alpha() < 8) {
+            while(colorBurta.alpha() < 20  && opModeIsActive()) {
             }
         } else {
-            drive.goOmniAutonomous(0d, 0.2, 0d);
-            while(colorBurta.alpha() < 8) {
+            drive.goOmniAutonomous(0.1, 0.2, 0d);
+            while(colorBurta.alpha() < 20  && opModeIsActive()) {
             }
         }
         drive.goOmniAutonomous(0d, 0d, 0d);
-        waitSec(0.1);
+        waitSec(0.3);
     }
 
     public void goToDegr(int target) {
         if (target - getHeading() >= 0) {
             drive.goOmniAutonomous(0d, 0d, 0.1);
-            while(Math.abs(target - getHeading()) >= 5) showGyroDebug();
+            while(Math.abs(target - getHeading()) >= 5  && opModeIsActive()) showGyroDebug();
             drive.goOmniAutonomous(0d, 0d, 0d);
         } else {
             drive.goOmniAutonomous(0d, 0d, -0.1);
-            while(Math.abs(target - getHeading()) >= 5) showGyroDebug();
+            while(Math.abs(target - getHeading()) >= 5  && opModeIsActive()) showGyroDebug();
             drive.goOmniAutonomous(0d, 0d, 0d);
         }
     }
@@ -292,7 +293,7 @@ public class OmniBotAutoRed extends LinearOpMode {
 
     public void  waitSec(double seconds) {
         runtime.reset();
-        while (runtime.seconds() < seconds) debug();
+        while (runtime.seconds() < seconds  && opModeIsActive()) debug();
     }
 
     public void apasa(String color){
@@ -348,10 +349,7 @@ public class OmniBotAutoRed extends LinearOpMode {
     }
 
     private void debug() {
-        telemetry.addData("a: ", a);
-        telemetry.addData("b: ", b);
-        telemetry.addData("c: ", c);
-        telemetry.addData("d: ", d);
+
     }
 
     private void setPower(double a, double b, double c, double d){

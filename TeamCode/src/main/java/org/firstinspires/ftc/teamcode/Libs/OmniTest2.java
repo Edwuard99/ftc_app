@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -17,11 +18,11 @@ import org.firstinspires.ftc.teamcode.Libs.Utils;
 
 /**
  * Created by User on 20/01/2017.
- *
  */
 
-@Autonomous(name = "OmniBotAutoBlue", group = "grup")
-public class OmniBotAutoBlue extends LinearOpMode {
+@Autonomous(name = "OmniTestStg", group = "pula")
+@Disabled
+public class OmniTest2 extends LinearOpMode {
     int distance = 0;
 
     Drive drive = null;
@@ -44,16 +45,15 @@ public class OmniBotAutoBlue extends LinearOpMode {
     public DcMotor motorC = null;
     public DcMotor motorD = null;
 
-    public double a, b, c, d; //inits
+    public double a,b,c,d;
 
-    //private ElapsedTime runtime = new ElapsedTime();
-
+    private ElapsedTime runtime = new ElapsedTime();
     @Override
     public void runOpMode() throws InterruptedException {
         GAMEPAD1 = new GAMEPAD(this.gamepad1, this.telemetry);
         GAMEPAD2 = new GAMEPAD(this.gamepad2, this.telemetry);
         drive = new Drive(this.hardwareMap, GAMEPAD1, "omni");
-        mechanisms = new Mechanisms(this.hardwareMap, GAMEPAD2, this.telemetry, "omni");//gamepads (copid, not used)
+        mechanisms = new Mechanisms(this.hardwareMap, GAMEPAD2, this.telemetry, "omni");
 
         drive.motorA.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         drive.motorA.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -61,7 +61,7 @@ public class OmniBotAutoBlue extends LinearOpMode {
         rangeDreapta = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "distantaDreapta");
         colorBurta = this.hardwareMap.colorSensor.get("culoareBurta");
         colorSensor = this.hardwareMap.colorSensor.get("culoare");
-        colorSensor.setI2cAddress(I2cAddr.create8bit(0x3a));//colour sensor adress
+        colorSensor.setI2cAddress(I2cAddr.create8bit(0x3a));
         gyroSensor = this.hardwareMap.gyroSensor.get("gyro");
 
         servoOpritor = this.hardwareMap.servo.get("servoOpritor");
@@ -92,61 +92,30 @@ public class OmniBotAutoBlue extends LinearOpMode {
 
         gyroSensor.calibrate();
         waitSec(1);
-        while (gyroSensor.isCalibrating() && opModeIsActive()) ;//gyro calibration
+        while(gyroSensor.isCalibrating());
         gyroSensor.resetZAxisIntegrator();
-        telemetry.addData("gyro calibrat", "");
-        telemetry.update();//update ecran telefon
+        telemetry.addData("gyro calibrat","");
+        telemetry.update();
 
         waitForStart();
-        motorLansare(0.18);//starts motors
-        servoOpritor.setPosition(0.9);
-        go(1500, 0.5);
-        waitSec(0.5);//conduce si opreste
-        gyroPID(0);
-        motorMaturica.setPower(1);
+        drive(0d, 0.5, 0d);
         waitSec(3);
-        motorMaturica.setPower(0);
-        motorLansare(0);
-
-        go(1000, 0.5);
-        gyroPID(90);
-        go(3500, 0.5);
-        goToWhiteLine("left");
-        gyroPID(90);
-        goToWall(10);
-        waitSec(0.3);
-        drive(0.5, 0d, 0d);
-        waitSec(0.5);
         drive(0d, 0d, 0d);
-        apasa("blue");
 
-        goBack(200, 0.5);
-        drive(0d, -0.5, 0d);
-        waitSec(1.5);
-        drive(0d, 0d, 0d);
-        goToWhiteLine("left");
-        gyroPID(90);
-        goToWall(10);
-        waitSec(0.3);
-        drive(0.5, 0d, 0.2d);
-        waitSec(0.5);
-        drive(0d, 0d, 0d);
-        apasa("blue");
-
-     /*   while (opModeIsActive()) {
+        while(opModeIsActive()){
             telemetry.addData("range: ", rangeDreapta.cmUltrasonic());
             telemetry.addData("gyro:", getHeading());
             telemetry.addData("burta alpha: ", colorBurta.alpha());
             telemetry.addData("culoare beacon: ", getColor());
             telemetry.update();
-        }*/
+        }
     }
 
-    public void go(int ticks, double speed) {
+    public void go (int ticks, double speed) {
         int pos = drive.motorA.getCurrentPosition();
         ticks = ticks + pos;
         drive(speed, 0d, 0d);
-        while (pos < ticks && opModeIsActive()) {
+        while(pos < ticks) {
             pos = drive.motorA.getCurrentPosition();
             telemetry.addData("gyro", getHeading());
             telemetry.update();
@@ -155,16 +124,16 @@ public class OmniBotAutoBlue extends LinearOpMode {
         waitSec(0.3);
     }
 
-    public void motorLansare(double power) {
+    public void motorLansare(double power){
         motorLansatorDreapta.setPower(power);
         motorLansatorStanga.setPower(power);
     }
 
-    public void goBack(int ticks, double speed) {
+    public void goBack (int ticks, double speed) {
         int pos = drive.motorA.getCurrentPosition();
         ticks = pos - ticks;
         drive(-speed, 0d, 0d);
-        while (pos > ticks && opModeIsActive()) {
+        while(pos > ticks) {
             pos = drive.motorA.getCurrentPosition();
             telemetry.addData("gyro", getHeading());
             telemetry.update();
@@ -173,17 +142,17 @@ public class OmniBotAutoBlue extends LinearOpMode {
     }
 
     public void goToWall(int cm) {
-        drive.goOmniAutonomous(0.5, 0d, -0.3);
-        while (rangeDreapta.cmUltrasonic() > cm && opModeIsActive()) {
+        drive.goOmniAutonomous(0.2, 0d, 0d);
+        while(rangeDreapta.cmUltrasonic() > cm){
             telemetry.addData("range:", rangeDreapta.cmUltrasonic());
             telemetry.update();
         }
         drive.goOmniAutonomous(0d, 0d, 0d);
     }
 
-    public void gyroPID(int target) {
+    public void gyroPID(int target){
         double kp = 0.0035;
-        double ki = 1;
+        double ki= 1;
         double kd = 0.2;
         double direction = 1;
         double lastDirection = 1;
@@ -195,7 +164,7 @@ public class OmniBotAutoBlue extends LinearOpMode {
         double error = 0;
         boolean targetAchieved = false;
 
-        while (!targetAchieved && opModeIsActive()) {
+        while(!targetAchieved){
             error = Math.abs(target - getHeading());
             //P = Utils.range(P, 0d, 90d, 0d, 1d);
 
@@ -208,25 +177,27 @@ public class OmniBotAutoBlue extends LinearOpMode {
             P = error * kp;
             //P = Utils.cut(P, 0d, 1d);
             D = D * kd;
-            if (target - getHeading() <= 0) {
+            if(target - getHeading() <= 0){
                 direction = -1;
-            } else {
+            }
+            else{
                 direction = 1;
             }
 
-            if (error < 10) {
-                I = 0.04;
+            if(error < 10) {
+                I = 0.05;
                 if (lasterror == error) {
                     I += 0.002;
                 } else I -= 0.001;
 
                 if (I < 0)
                     I = 0;
-            } else {
+            }
+            else{
                 I = 0;
             }
 
-            if (Math.abs(target - getHeading()) < 2) I = 0;
+            if(Math.abs(target - getHeading()) < 2) I = 0;
             output = P + I;
             output = output * direction;
 
@@ -241,7 +212,7 @@ public class OmniBotAutoBlue extends LinearOpMode {
             telemetry.addData("error: ", error);
             telemetry.addData("output: ", output);
             telemetry.update();
-            if (Math.abs(target - getHeading()) < 2 && gyroSensor.rawZ() < 50) {
+            if(Math.abs(target - getHeading()) < 2 && gyroSensor.rawZ() < 50){
                 targetAchieved = true;
             }
             waitSec(0.1);
@@ -254,17 +225,29 @@ public class OmniBotAutoBlue extends LinearOpMode {
     }
 
     private void goToWhiteLine(String direction) {
-        if (direction == "left") {
-            drive.goOmniAutonomous(0d, -0.2, 0d);//aici
-            while (colorBurta.alpha() < 20 && opModeIsActive()) {
+        if(direction == "left") {
+            drive.goOmniAutonomous(0d, -0.2, 0d);
+            while(colorBurta.alpha() < 8) {
             }
         } else {
-            drive.goOmniAutonomous(0.1, 0.2, 0d);
-            while (colorBurta.alpha() < 20 && opModeIsActive()) {//aaici
+            drive.goOmniAutonomous(0d, 0.2, 0d);
+            while(colorBurta.alpha() < 8) {
             }
         }
         drive.goOmniAutonomous(0d, 0d, 0d);
         waitSec(0.3);
+    }
+
+    public void goToDegr(int target) {
+        if (target - getHeading() >= 0) {
+            drive.goOmniAutonomous(0d, 0d, 0.1);
+            while(Math.abs(target - getHeading()) >= 5) showGyroDebug();
+            drive.goOmniAutonomous(0d, 0d, 0d);
+        } else {
+            drive.goOmniAutonomous(0d, 0d, -0.1);
+            while(Math.abs(target - getHeading()) >= 5) showGyroDebug();
+            drive.goOmniAutonomous(0d, 0d, 0d);
+        }
     }
 
     public int getHeading() {
@@ -279,27 +262,28 @@ public class OmniBotAutoBlue extends LinearOpMode {
         telemetry.update();
     }
 
-    public void waitSec(double seconds) {
-        //runtime.reset();
-        //while (runtime.seconds() < seconds) debug();
-        long sleep_time = (long) (seconds * 1000);
-        this.sleep(sleep_time);
+    public void  waitSec(double seconds) {
+        runtime.reset();
+        while (runtime.seconds() < seconds) debug();
     }
 
-    public void apasa(String color) {
-        if (getColor().compareToIgnoreCase("blue") == 0) {
-            if (color.compareToIgnoreCase("blue") == 0) {
+    public void apasa(String color){
+        if(getColor().compareToIgnoreCase("blue") == 0){
+            if(color.compareToIgnoreCase("blue") == 0) {
                 servoApasatorDreapta.setPosition(1);
                 servoApasatorStanga.setPosition(0);
-            } else {
+            }
+            else{
                 servoApasatorDreapta.setPosition(0);
                 servoApasatorStanga.setPosition(1);
             }
-        } else {
-            if (color.compareToIgnoreCase("blue") == 0) {
+        }
+        else{
+            if(color.compareToIgnoreCase("blue") == 0) {
                 servoApasatorDreapta.setPosition(0);
                 servoApasatorStanga.setPosition(1);
-            } else {
+            }
+            else{
                 servoApasatorDreapta.setPosition(1);
                 servoApasatorStanga.setPosition(0);
             }
@@ -309,14 +293,14 @@ public class OmniBotAutoBlue extends LinearOpMode {
         servoApasatorStanga.setPosition(0);
     }
 
-    public String getColor() {
-        if (colorSensor.blue() > colorSensor.red())
+    public String getColor(){
+        if(colorSensor.blue() > colorSensor.red())
             return "blue";
         else
             return "red";
     }
 
-    public void drive(Double left_stick_powerY, Double left_stick_powerX, Double right_stick_powerX) {
+    public void drive(Double left_stick_powerY, Double left_stick_powerX, Double right_stick_powerX){
         a = left_stick_powerY + left_stick_powerX;
         b = -left_stick_powerY + left_stick_powerX;
         c = -left_stick_powerY - left_stick_powerX;
@@ -336,11 +320,10 @@ public class OmniBotAutoBlue extends LinearOpMode {
     }
 
     private void debug() {
-        telemetry.addData("debug: ", "debug");
-        telemetry.update();
+
     }
 
-    private void setPower(double a, double b, double c, double d) {
+    private void setPower(double a, double b, double c, double d){
         motorA.setPower(a);
         motorB.setPower(b);
         motorC.setPower(c);

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -25,6 +26,7 @@ ticks per wheel rotation = 358.4
 */
 
 @Autonomous(name = "TankBotAutonomous", group = "Autonomous")
+@Disabled
 public class TankBotAutonomous extends LinearOpMode {
     DcMotor motorStangaSpate = null;
     DcMotor motorStangaFata = null;

@@ -6,6 +6,7 @@ import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cCompassSensor;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -20,6 +21,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  * Created by Iedi on 18.01.2017.
  */
 @Autonomous(name = "muita", group = "muita")
+@Disabled
 public class TankBotTest extends LinearOpMode {
     ColorSensor colorStanga = null;
     ColorSensor colorDreapta = null;

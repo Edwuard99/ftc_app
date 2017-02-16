@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import android.graphics.Path;
 import android.telecom.TelecomManager;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.teamcode.Libs.GAMEPAD;
  * Created by edidi on 16.10.2016.
  */
 @TeleOp(name = "ShowGamepadValue", group = "Gamepad")
+@Disabled
 public class ShowGamepadValues extends OpMode{
     GAMEPAD GAMEPAD1 = null;
     GAMEPAD GAMEPAD2 = null;

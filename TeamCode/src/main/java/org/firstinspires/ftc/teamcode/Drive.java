@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.GyroSensor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Libs.GAMEPAD;
 import org.firstinspires.ftc.teamcode.Libs.Utils;
@@ -23,6 +24,9 @@ public class Drive{
     public DcMotor motorStangaSpate = null;
     public DcMotor motorDreaptaFata = null;
     public DcMotor motorDreaptaSpate = null;
+
+    public Servo servoApasatorStanga = null;
+    public Servo servoApasatorDreapta = null;
 
     public String type = null;
 
@@ -44,6 +48,9 @@ public class Drive{
         if(type.compareToIgnoreCase("mecanum") == 0){
 
         }
+
+        servoApasatorStanga = hardwareMap.servo.get("servoApasatorStanga");
+        servoApasatorDreapta = hardwareMap.servo.get("servoApasatorDreapta");
     }
     Drive(HardwareMap hardwareMap, String type){
         this.type = type;
@@ -90,6 +97,11 @@ public class Drive{
 
         motorDreaptaFata.setDirection(DcMotorSimple.Direction.FORWARD);
         motorDreaptaSpate.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        motorStangaFata.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorStangaSpate.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorDreaptaFata.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorDreaptaSpate.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     private void setPower(double a, double b, double c, double d){
@@ -109,6 +121,9 @@ public class Drive{
         if(type.compareToIgnoreCase("mecanum") == 0){
 
         }
+
+        servoApasatorDreapta.setPosition(gamepad.right_bumper.toggleInt);
+        servoApasatorStanga.setPosition(gamepad.left_bumper.toggleInt);
     }
 
     public void goTank(Double power_left, Double power_right){
@@ -145,10 +160,26 @@ public class Drive{
         }
     }
     public void goOmni(Double left_stick_powerY, Double left_stick_powerX, Double right_stick_powerX){
-        double a = left_stick_powerY + left_stick_powerX;
-        double b = -left_stick_powerY + left_stick_powerX;
-        double c = -left_stick_powerY - left_stick_powerX;
-        double d = left_stick_powerY - left_stick_powerX;
+        double a;
+        double b;
+        double c;
+        double d;
+        if(gamepad.y.toggle){
+            a = -left_stick_powerY - left_stick_powerX;
+            b = left_stick_powerY - left_stick_powerX;
+            c = left_stick_powerY + left_stick_powerX;
+            d = -left_stick_powerY + left_stick_powerX;
+        }
+        else {
+            a = left_stick_powerY + left_stick_powerX;
+            b = -left_stick_powerY + left_stick_powerX;
+            c = -left_stick_powerY - left_stick_powerX;
+            d = left_stick_powerY - left_stick_powerX;
+        }
+       /* a = left_stick_powerY + left_stick_powerX;
+        b = -left_stick_powerY + left_stick_powerX;
+        c = -left_stick_powerY - left_stick_powerX;
+        d = left_stick_powerY - left_stick_powerX;*/
 
         a += right_stick_powerX;
         b += right_stick_powerX;

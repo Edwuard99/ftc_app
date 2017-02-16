@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.teamcode.Libs.GAMEPAD;
  */
 
 @TeleOp(name = "Test", group = "Gamepad")
+@Disabled
 public class Test extends OpMode {
     GAMEPAD GAMEPAD1 = null;
     GAMEPAD GAMEPAD2 = null;

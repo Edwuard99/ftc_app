@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.Libs.GAMEPAD;
  * Created by edidi on 09.10.2016.
  */
 
-@TeleOp(name = "OmniBot", group = "TeleOp")
+@TeleOp(name = "OmniBot", group = "TeleOp")//init
 public class OmniBot extends OpMode {
     private GAMEPAD GAMEPAD1 = null;
     private GAMEPAD GAMEPAD2 = null;
@@ -21,7 +21,7 @@ public class OmniBot extends OpMode {
     private Mechanisms mechanisms = null;
 
     @Override
-    public void init() {
+    public void init() {//takes gamepad values
         GAMEPAD1 = new GAMEPAD(this.gamepad1, this.telemetry);
         GAMEPAD2 = new GAMEPAD(this.gamepad2, this.telemetry);
         drive = new Drive(this.hardwareMap, GAMEPAD1, "omni");
@@ -29,7 +29,7 @@ public class OmniBot extends OpMode {
     }
 
     @Override
-    public void loop() {
+    public void loop() {//gamepad valoare
         drive.goTeleOp();
         mechanisms.work();
         telemetry.addData("gamepad y: ", GAMEPAD1.left_stick_powerY);
